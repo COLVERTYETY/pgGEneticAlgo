@@ -7,18 +7,17 @@ class being(object):
     SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
     MAXSPEED=10
     CELLSIZE=10
+    antenannumber=2
+    antennaangle=np.pi/6
+    antennalength=80
+    radius=5
+    color=(0,255,0)
+    antennacolor=(100,255,100)
     def __init__(self,x,y):
         self.pos=np.array([x,y])
         self.vel=np.array([np.random.randint(0,4)-2,np.random.randint(0,4)-2])
         self.acc=np.array([0,0])
-        self.antenannumber=2
-        self.antennainput=np.zeros(((self.antenannumber*2)+1))
-        self.antennaangle=np.pi/6
-        self.antennalength=80
-        self.radius=5
-        self.color=(0,255,0)
-        self.antennacolor=(100,255,100)
-    
+        self.antennainput=np.zeros(((being.antenannumber*2)+1))
     def __repr__(self):
         return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+")")
 
@@ -33,24 +32,24 @@ class being(object):
 
     def constructanennas(self):
         angle = np.arctan2(self.vel[1],self.vel[0])
-        x=self.antennalength*np.cos(angle)
-        y = self.antennalength*np.sin(angle)
+        x=being.antennalength*np.cos(angle)
+        y = being.antennalength*np.sin(angle)
         yield np.array([x,y])
-        for _ in range(self.antenannumber):
-            angle+= self.antennaangle
-            x=self.antennalength*np.cos(angle)
-            y = self.antennalength*np.sin(angle)
+        for _ in range(being.antenannumber):
+            angle+= being.antennaangle
+            x=being.antennalength*np.cos(angle)
+            y = being.antennalength*np.sin(angle)
             yield np.array([x,y])
         angle = np.arctan2(self.vel[1],self.vel[0])
-        for _ in range(self.antenannumber):
-            angle-= self.antennaangle
-            x=self.antennalength*np.cos(angle)
-            y = self.antennalength*np.sin(angle)
+        for _ in range(being.antenannumber):
+            angle-= being.antennaangle
+            x=being.antennalength*np.cos(angle)
+            y = being.antennalength*np.sin(angle)
             yield np.array([x,y])
         
-    def drawantenna(self):
-        for i in self.constructanennas():
-            pg.draw.line(being.SURFACE,self.antennacolor,(int(self.pos[0]),int(self.pos[1])),(int(self.pos[0]+i[0]),int(self.pos[1]+i[1])),1)
+    # def drawantenna(self):
+    #     for i in self.constructanennas():
+    #         pg.draw.line(being.SURFACE,self.antennacolor,(int(self.pos[0]),int(self.pos[1])),(int(self.pos[0]+i[0]),int(self.pos[1]+i[1])),1)
 
     def inmapgrid(self,mapgrid,CELLSIZE):
         gridpos= self.pos//CELLSIZE
@@ -74,7 +73,7 @@ class being(object):
                     intersectpos=np.array([line[0][0],Ya])
                     if Ya <= max(line[0][1],line[1][1]) and Ya>= min(line[1][1],line[0][1]):# if the point is on the line, the y is compatible
                         dist = np.linalg.norm(intersectpos-self.pos)
-                        res = dist/self.antennalength#make it to %
+                        res = dist/being.antennalength#make it to %
                         if self.antennainput[cc] >=res:
                             self.antennainput[cc]=res
         elif line[0][1]==line[1][1]:#if line is horisontal
@@ -91,31 +90,27 @@ class being(object):
                     intersectpos=np.array([Xa,line[0][1]])
                     if Xa <= max(line[0][0],line[1][0]) and Xa>= min(line[1][0],line[0][0]):# if the point is on the line, the y is compatible
                         dist = np.linalg.norm(intersectpos-self.pos)
-                        res = dist/self.antennalength#make it to %
+                        res = dist/being.antennalength#make it to %
                         if res<=self.antennainput[cc]:
                             self.antennainput[cc]=res
                          
-
-
-    def circlepointsegment(self,line):
-        vline = line[1]-line[0]
-        vpline = self.pos-line[0]
-        lvline = vline[0]*vline[0]+vline[1]*vline[1]
-        dot = vline[0]*vpline[0]+vline[1]*vpline[1]
-        t = max(0,min(lvline,dot))/(lvline)
-        closespos=np.array([0,0])
-        closespos = (t*vline) + line[0]
-        dist = np.linalg.norm(self.pos-closespos)
-        if dist < (self.radius):
-            if dist<0.0001:
-                dist=0.0001
-            overlap = (dist-self.radius)
-            self.pos[0]-=overlap*(self.pos[0]-closespos[0])/dist
-            self.pos[1]-=overlap*(self.pos[1]-closespos[1])/dist
-
-
+    # def circlepointsegment(self,line):
+    #     vline = line[1]-line[0]
+    #     vpline = self.pos-line[0]
+    #     lvline = vline[0]*vline[0]+vline[1]*vline[1]
+    #     dot = vline[0]*vpline[0]+vline[1]*vpline[1]
+    #     t = max(0,min(lvline,dot))/(lvline)
+    #     closespos=np.array([0,0])
+    #     closespos = (t*vline) + line[0]
+    #     dist = np.linalg.norm(self.pos-closespos)
+    #     if dist < (self.radius):
+    #         if dist<0.0001:
+    #             dist=0.0001
+    #         overlap = (dist-self.radius)
+    #         self.pos[0]-=overlap*(self.pos[0]-closespos[0])/dist
+    #         self.pos[1]-=overlap*(self.pos[1]-closespos[1])/dist
     def draw(self):
-        pg.draw.circle(being.SURFACE,self.color,(int(self.pos[0]),int(self.pos[1])), self.radius)
+        pg.draw.circle(being.SURFACE,being.color,(int(self.pos[0]),int(self.pos[1])), being.radius)
 
     
         
