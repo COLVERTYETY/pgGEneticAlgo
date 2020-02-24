@@ -1,6 +1,7 @@
 import pygame as pg
 import numpy as np
 from part import *
+import spatialhash
 
 pg.init() # pylint: disable=no-member
 WIDTH=800
@@ -16,12 +17,10 @@ being.SURFACE=screen
 MAPGEO = np.load("./mapGEO.npy")
 MAP = np.load("./map.npy")
 CELLSIZE = 20
+GLOBALANTENNALENGTH=80
 startx = 100
 starty = 450
 
-#pg.draw.circle(screen,(255,255,0),(100,450),10)
-for _ in range(10):
-    theARRY.append(being(startx,starty))
 
 def drawmap(mapgrid):
     global CELLSIZE
@@ -38,6 +37,13 @@ def drawgeometry(linearr):
         y2 = int(line[1][1])
         pg.draw.line(screen,(255,0,0),(x1,y1),(x2,y2),1)
 
+#pg.draw.circle(screen,(255,255,0),(100,450),10)
+for _ in range(10):
+    theARRY.append(being(startx,starty))
+
+spatialhash.init(int(WIDTH/GLOBALANTENNALENGTH),int(HEIGHT/GLOBALANTENNALENGTH))
+spatialhash.organise(MAPGEO,GLOBALANTENNALENGTH)
+
 while not done:
         for event in pg.event.get():
                 if event.type == pg.QUIT:# pylint: disable=no-member
@@ -49,7 +55,7 @@ while not done:
         for i in theARRY:
             i.apply()
             i.antennainput.fill(1)
-            for j in MAPGEO:
+            for j in spatialhash.getinreach(i,GLOBALANTENNALENGTH):
                 i.readantenna(j)
             if i.inmapgrid(MAP,CELLSIZE):
                 i.color=(255,0,0)
@@ -60,6 +66,6 @@ while not done:
             i.draw()
         fps = font.render(str(int(clock.get_fps())), True, pg.Color('white'))
         screen.blit(fps, (50, 50))
-        clock.tick(30)
+        clock.tick()
         pg.display.flip()
     
