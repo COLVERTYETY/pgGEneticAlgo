@@ -38,7 +38,7 @@ def drawgeometry(linearr):
         pg.draw.line(screen,(255,0,0),(x1,y1),(x2,y2),1)
 
 #pg.draw.circle(screen,(255,255,0),(100,450),10)
-for _ in range(10):
+for _ in range(100):
     theARRY.append(being(startx,starty))
 
 spatialhash.init(int(WIDTH/GLOBALANTENNALENGTH),int(HEIGHT/GLOBALANTENNALENGTH))
