@@ -1,15 +1,14 @@
-import pygame as pg
 import numpy as np
 
 
 class being(object):
     GRID = np.zeros([10, 10])
-    SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
+    #SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
     MAXSPEED=10
     CELLSIZE=10
     antenannumber=2
     antennaangle=np.pi/6
-    antennalength=80
+    antennalength=40
     radius=5
     color=(0,255,0)
     antennacolor=(100,255,100)
@@ -109,8 +108,7 @@ class being(object):
     #         overlap = (dist-self.radius)
     #         self.pos[0]-=overlap*(self.pos[0]-closespos[0])/dist
     #         self.pos[1]-=overlap*(self.pos[1]-closespos[1])/dist
-    def draw(self):
-        pg.draw.circle(being.SURFACE,being.color,(int(self.pos[0]),int(self.pos[1])), being.radius)
+    
 
     
         
