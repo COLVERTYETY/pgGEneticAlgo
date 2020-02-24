@@ -62,7 +62,6 @@ class being(object):
         cc=-1
         if line[0][0]==line[1][0]:#line is vertical
             for i in self.constructanennas():
-                color = (0,255,0)
                 cc+=1
                 antenna = [[],[]]
                 antenna[0] = self.pos
@@ -78,11 +77,8 @@ class being(object):
                         res = dist/self.antennalength#make it to %
                         if self.antennainput[cc] >=res:
                             self.antennainput[cc]=res
-                            color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
-                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
         elif line[0][1]==line[1][1]:#if line is horisontal
             for i in self.constructanennas():
-                color = (0,255,0)
                 cc+=1
                 antenna = [[],[]]
                 antenna[0] = self.pos
@@ -98,36 +94,7 @@ class being(object):
                         res = dist/self.antennalength#make it to %
                         if res<=self.antennainput[cc]:
                             self.antennainput[cc]=res
-                            color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
-                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
-
-    def intersectantenna(self,line):
-        cc=-1
-        self.antennainput.fill(1)
-        for t in self.constructanennas():
-            color = (0,255,0)
-            cc+=1
-            antenna = [[],[]]
-            antenna[0] = self.pos
-            antenna[1] = self.pos+t
-            if (max(antenna[0][0],antenna[1][0]) >= min(line[0][0],line[1][0])):#check if the intersection of the segments actualy is possible to eliminate most lines
-                A1 = (antenna[0][1]-antenna[1][1])/(antenna[0][0]-antenna[1][0])# divide by 0 is impossible
-                A2 = (line[0][1]-line[1][1])/(line[0][0]-line[1][0])
-                if (A1 - A2) > 0.001:#if paralel ignore caus fuck that
-                    B1 = antenna[0][1] - (A1*antenna[0][0])
-                    B2 = line[0][1] - (A2*line[0][0])
-                    print(A1,B1,"_",A2,B2)
-                    Xa = (B2 - B1)/(A1 - A2)
-                    Ya = A1 * Xa + B1
-                    if not ( (Xa < max( min(antenna[0][0],antenna[1][0]) , min(line[0][0],line[1][0]))) or (Xa > min( max(antenna[0][0],antenna[1][0]) , max(line[0][0],line[1][0])))) : #make really shure the point actuyally exists
-                        intersect = np.array([Xa,Ya])
-                        dist = np.linalg.norm(intersect-self.pos)
-                        res = dist/self.antennalength#make it to %
-                        self.antennainput[cc]=res
-                        print("res: ",res)
-                        color = (int(255*(1/res)),int(255*(res)),0)#scale the color according to the percent
-                        pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
-                            
+                         
 
 
     def circlepointsegment(self,line):
