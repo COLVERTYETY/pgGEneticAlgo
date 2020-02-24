@@ -14,7 +14,7 @@ class being(object):
         self.antenannumber=2
         self.antennainput=np.zeros(((self.antenannumber*2)+1))
         self.antennaangle=np.pi/6
-        self.antennalength=80
+        self.antennalength=40
         self.radius=5
         self.color=(0,255,0)
         self.antennacolor=(100,255,100)
@@ -79,7 +79,7 @@ class being(object):
                         if self.antennainput[cc] >=res:
                             self.antennainput[cc]=res
                             color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
-                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
+                            #pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
         elif line[0][1]==line[1][1]:#if line is horisontal
             for i in self.constructanennas():
                 color = (0,255,0)
@@ -99,7 +99,7 @@ class being(object):
                         if res<=self.antennainput[cc]:
                             self.antennainput[cc]=res
                             color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
-                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)                  
+                            #pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)                  
 
 
     def circlepointsegment(self,line):

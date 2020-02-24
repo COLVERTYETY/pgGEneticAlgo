@@ -17,7 +17,7 @@ being.SURFACE=screen
 MAPGEO = np.load("./mapGEO.npy")
 MAP = np.load("./map.npy")
 CELLSIZE = 20
-GLOBALANTENNALENGTH=80
+GLOBALANTENNALENGTH=40
 startx = 100
 starty = 450
 
@@ -38,7 +38,7 @@ def drawgeometry(linearr):
         pg.draw.line(screen,(255,0,0),(x1,y1),(x2,y2),1)
 
 #pg.draw.circle(screen,(255,255,0),(100,450),10)
-for _ in range(100):
+for _ in range(200):
     theARRY.append(being(startx,starty))
 
 spatialhash.init(int(WIDTH/GLOBALANTENNALENGTH),int(HEIGHT/GLOBALANTENNALENGTH))
