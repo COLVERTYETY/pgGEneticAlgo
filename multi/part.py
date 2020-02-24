@@ -22,20 +22,6 @@ class being(object):
     def __repr__(self):
         return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+")")
 
-    def readantennas(self,allthewalls):
-        res=[]
-        for _ in self.constructanennas():
-            # base=self.pos
-            # end=self.pos+i
-            #if intersection
-                #get coord
-                #convert distance to percent
-                #append percent to res
-                #calculate color according to percent
-                #draw antenna to avoid redundence
-            pass
-        return res           
-
     def apply(self):
         self.vel+=self.acc
         self.acc=np.array([0,0])

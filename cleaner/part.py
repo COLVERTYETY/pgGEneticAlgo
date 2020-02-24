@@ -22,20 +22,6 @@ class being(object):
     def __repr__(self):
         return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+")")
 
-    def readantennas(self,allthewalls):
-        res=[]
-        for _ in self.constructanennas():
-            # base=self.pos
-            # end=self.pos+i
-            #if intersection
-                #get coord
-                #convert distance to percent
-                #append percent to res
-                #calculate color according to percent
-                #draw antenna to avoid redundence
-            pass
-        return res           
-
     def apply(self):
         self.vel+=self.acc
         self.acc=np.array([0,0])
@@ -76,40 +62,44 @@ class being(object):
         cc=-1
         if line[0][0]==line[1][0]:#line is vertical
             for i in self.constructanennas():
+                color = (0,255,0)
                 cc+=1
                 antenna = [[],[]]
                 antenna[0] = self.pos
                 antenna[1] = self.pos+i
-                self.intersectantenna(antenna,line,cc)
+                if ((line[0][0] <= max(antenna[0][0],antenna[1][0])) and (line[0][0] >= min(antenna[0][0],antenna[1][0]))) and antenna[0][0]!=antenna[1][0]:
+                    #colision is possible because x are compatible, checking y still necessary, we ignore if both parallel cause lazy
+                    A1 = (antenna[0][1]-antenna[1][1])/(antenna[0][0]-antenna[1][0])# divide by 0 is impossible because we ignore paralel case
+                    B1 = antenna[0][1] - (A1*antenna[0][0])
+                    Ya = A1*line[0][0] + B1
+                    intersectpos=np.array([line[0][0],Ya])
+                    if Ya <= max(line[0][1],line[1][1]) and Ya>= min(line[1][1],line[0][1]):# if the point is on the line, the y is compatible
+                        dist = np.linalg.norm(intersectpos-self.pos)
+                        res = dist/self.antennalength#make it to %
+                        if self.antennainput[cc] >=res:
+                            self.antennainput[cc]=res
+                            color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
+                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
         elif line[0][1]==line[1][1]:#if line is horisontal
-            tmp=line[0]
-            line[0]=line[1]
-            line[1]=tmp
             for i in self.constructanennas():
+                color = (0,255,0)
                 cc+=1
                 antenna = [[],[]]
-                antenna[1] = self.pos
-                antenna[0] = self.pos+i
-                self.intersectantenna(antenna,line,cc)
-        
-        
-            
-    def intersectantenna(self,antenna,line,cc):
-        color = (0,255,0)
-        if ((line[0][0] <= max(antenna[0][0],antenna[1][0])) and (line[0][0] >= min(antenna[0][0],antenna[1][0]))) and antenna[0][0]!=antenna[1][0]:
-            #colision is possible because x are compatible, checking y still necessary, we ignore if both parallel cause lazy
-            A1 = (antenna[0][1]-antenna[1][1])/(antenna[0][0]-antenna[1][0])# divide by 0 is impossible because we ignore paralel case
-            B1 = antenna[0][1] - (A1*antenna[0][0])
-            Ya = A1*line[0][0] + B1
-            intersectpos=np.array([line[0][0],Ya])
-            if Ya <= max(line[0][1],line[1][1]) and Ya>= min(line[1][1],line[0][1]):# if the point is on the line, the y is compatible
-                dist = np.linalg.norm(intersectpos-self.pos)
-                res = dist/self.antennalength#make it to %
-                if self.antennainput[cc] >=res:
-                    self.antennainput[cc]=res
-                    color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
-                    pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)
-                    
+                antenna[0] = self.pos
+                antenna[1] = self.pos+i
+                if ((line[0][1] <= max(antenna[0][1],antenna[1][1])) and (line[0][1] >= min(antenna[0][1],antenna[1][1]))) and antenna[0][1]!=antenna[1][1]:
+                    #colision is possible because y are compatible, checking x still necessary , we ignore paralel cause lazy
+                    A1 = (antenna[0][0]-antenna[1][0])/(antenna[0][1]-antenna[1][1])# divide by 0 is impossible because we ignore paralel case
+                    B1 = antenna[0][0] - (A1*antenna[0][1])#so we did the calculations by seraching x = A1*y+B1
+                    Xa = A1*line[0][1] + B1
+                    intersectpos=np.array([Xa,line[0][1]])
+                    if Xa <= max(line[0][0],line[1][0]) and Xa>= min(line[1][0],line[0][0]):# if the point is on the line, the y is compatible
+                        dist = np.linalg.norm(intersectpos-self.pos)
+                        res = dist/self.antennalength#make it to %
+                        if res<=self.antennainput[cc]:
+                            self.antennainput[cc]=res
+                            color = (int(255-(255*(res))),int(255*(res)),0)#scale the color according to the percent
+                            pg.draw.line(being.SURFACE,color,(int(antenna[0][0]),int(antenna[0][1])),(int(antenna[1][0]),int(antenna[1][1])),1)                  
 
 
     def circlepointsegment(self,line):
