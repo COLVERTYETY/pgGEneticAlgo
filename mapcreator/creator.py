@@ -12,7 +12,7 @@ NAME="map.npy"
 
 print("welcome to map generator !!")
 print("enter a name to load a file, if no file is found a file will be created !!")
-res = input()
+res = str(input())
 if len(res)>1:
     NAME=res
     if os.path.exists('./'+res):
@@ -63,7 +63,7 @@ while not done:
                         (w,h) = pg.mouse.get_pos()
                         mpos=np.array([w,h])                 
                         mg.toggle(mpos,CELLSIZE,state)
-                        mg.generategeometry(CELLSIZE)
+                        mg.fullgeometry(CELLSIZE)
                 if event.type == pg.MOUSEBUTTONUP: # pylint: disable=no-member
                         mouseisdown=False
                 if event.type == pg.MOUSEMOTION: # pylint: disable=no-member
@@ -71,7 +71,7 @@ while not done:
                         (w,h) = pg.mouse.get_pos()
                         mpos=np.array([w,h])                 
                         mg.toggle(mpos,CELLSIZE,state)
-                        mg.generategeometry(CELLSIZE)
+                        mg.fullgeometry(CELLSIZE)
         
        
         screen.fill((0,0,0))
