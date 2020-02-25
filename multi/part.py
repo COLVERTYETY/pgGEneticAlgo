@@ -5,6 +5,7 @@ class being(object):
     GRID = np.zeros([10, 10])
     #SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
     MAXSPEED=10
+    MINSPEED=1
     CELLSIZE=10
     antenannumber=2
     antennaangle=np.pi/6
@@ -14,13 +15,16 @@ class being(object):
     antennacolor=(100,255,100)
     def __init__(self,x,y):
         self.pos=np.array([x,y])
-        self.vel=np.array([0,-1])
+        self.vel=np.array([0,-1.5])
         self.acc=np.array([0,0])
         self.antennainput=np.zeros(((being.antenannumber*2)+1))
         self.weights = np.zeros(((being.antenannumber*2)+3,2))
+        self.fitness=0
+        self.gridfit=1
+        self.alive = True
 
     def __repr__(self):
-        return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+")")
+        return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+"):"+str(self.fitness))
 
     def apply(self):
         inputs = np.hstack((self.antennainput,self.vel))
@@ -30,6 +34,8 @@ class being(object):
         if norm>being.MAXSPEED:
             self.vel[0]/=norm/being.MAXSPEED
             self.vel[1]/=norm/being.MAXSPEED
+        if norm<being.MINSPEED:
+            self.alive=False
         self.pos=self.pos+self.vel
 
     def constructanennas(self):
@@ -56,7 +62,12 @@ class being(object):
     def inmapgrid(self,mapgrid,CELLSIZE):
         gridpos= self.pos//CELLSIZE
         if gridpos[0]>=0 and gridpos[1]>=0 and gridpos[0]<len(mapgrid[0]) and gridpos[1]<len(mapgrid):
-            return mapgrid[int(gridpos[1])][int(gridpos[0])]!=0
+            val = mapgrid[int(gridpos[1])][int(gridpos[0])]
+            if val==0:
+                self.alive=False
+            elif val==(self.gridfit+1):
+                self.gridfit = val
+                self.fitness+=10
 
 
     def readantenna(self,line):
