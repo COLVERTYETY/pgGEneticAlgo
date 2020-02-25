@@ -1,0 +1,6 @@
+numpy
+pygame
+ray
+psutil
+colorsys
+copy
