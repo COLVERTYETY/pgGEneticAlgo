@@ -47,7 +47,8 @@ def drawgeometry(linearr):
         pg.draw.line(screen,(255,0,0),(x1,y1),(x2,y2),1)
 
 def draw(part):
-        pg.draw.circle(screen,(0,255,0),(int(part.pos[0]),int(part.pos[1])), being.radius)
+        pg.draw.circle(screen,(255,255,255),(int(part.pos[0]),int(part.pos[1])), being.radius)
+        pg.draw.circle(screen,(0,0,0),(int(part.pos[0]),int(part.pos[1])), being.radius+1,1)
 
 def splitter(length, i,n):
     (k,m) = divmod(length, n)
@@ -59,21 +60,25 @@ def splitter(length, i,n):
 def thetask(objarray,mapgrid,mapgeometry,ggrid,antennalength,sizeofcell):
     newtmp = copy.deepcopy(objarray)
     for i in newtmp:
-        i.apply()
         i.antennainput.fill(1)
         for j in spatialhash.getinreach(i,antennalength,ggrid):
             i.readantenna(j)
+        i.apply()
         if  not i.inmapgrid(mapgrid,sizeofcell):
             i.pos=np.array([100,450])
-            i.vel = np.array([np.random.randint(0,4)-2,np.random.randint(0,4)-2])
+            i.vel = np.array([0,-1+np.random.randint(10)/10])
     return newtmp
 
 amount=100
 num_cpus = psutil.cpu_count(logical=True)-1
+print("begin initializing the beings")
 for _i in range(num_cpus):
     tmp=[]
+    print(_i)
     for _j in range(amount):
-        tmp.append(being(startx,starty))
+        ttmp=being(startx,starty)
+        ttmp.weights = np.random.rand((being.antenannumber*2)+3,2) - np.random.rand((being.antenannumber*2)+3,2)
+        tmp.append(ttmp)
     theARRY.append(tmp)
 
 print("total amount  = ",amount*num_cpus)
@@ -104,9 +109,9 @@ while not done:
         for i in theARRY:
             for j in i:
                 draw(j)
-        theARRY= ray.get(active)
         fps = font.render(str(int(clock.get_fps())), True, pg.Color('white'))
         screen.blit(fps, (50, 50))
+        theARRY= ray.get(active)
         clock.tick(30)
         pg.display.flip()
     

@@ -14,20 +14,23 @@ class being(object):
     antennacolor=(100,255,100)
     def __init__(self,x,y):
         self.pos=np.array([x,y])
-        self.vel=np.array([np.random.randint(0,4)-2,np.random.randint(0,4)-2])
+        self.vel=np.array([0,-1])
         self.acc=np.array([0,0])
         self.antennainput=np.zeros(((being.antenannumber*2)+1))
+        self.weights = np.zeros(((being.antenannumber*2)+3,2))
+
     def __repr__(self):
         return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+")")
 
     def apply(self):
-        self.vel+=self.acc
-        self.acc=np.array([0,0])
+        inputs = np.hstack((self.antennainput,self.vel))
+        self.acc =np.dot(inputs,self.weights)
+        self.vel=self.vel+self.acc
         norm = np.linalg.norm(self.vel)
         if norm>being.MAXSPEED:
             self.vel[0]/=norm/being.MAXSPEED
             self.vel[1]/=norm/being.MAXSPEED
-        self.pos+=self.vel
+        self.pos=self.pos+self.vel
 
     def constructanennas(self):
         angle = np.arctan2(self.vel[1],self.vel[0])
