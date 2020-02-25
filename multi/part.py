@@ -53,7 +53,7 @@ class being(object):
     def inmapgrid(self,mapgrid,CELLSIZE):
         gridpos= self.pos//CELLSIZE
         if gridpos[0]>=0 and gridpos[1]>=0 and gridpos[0]<len(mapgrid[0]) and gridpos[1]<len(mapgrid):
-            return mapgrid[int(gridpos[1])][int(gridpos[0])]==1
+            return mapgrid[int(gridpos[1])][int(gridpos[0])]!=0
 
 
     def readantenna(self,line):

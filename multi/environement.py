@@ -5,6 +5,7 @@ import spatialhash
 import ray
 import psutil
 import copy
+from colorsys import hsv_to_rgb
 pg.init() # pylint: disable=no-member
 WIDTH=800
 HEIGHT=700
@@ -22,14 +23,20 @@ CELLSIZE = 20
 GLOBALANTENNALENGTH=40
 startx = 100
 starty = 450
+MAX=1
 
-
-def drawmap(mapgrid):
+def drawmap(mapgrid,mmax):
     global CELLSIZE
     for y in range(len(mapgrid)):
         for x in range(len(mapgrid[y])):
-            if mapgrid[y][x]==1:
-                pg.draw.rect(screen,(0,0,255),pg.Rect(x*CELLSIZE,y*CELLSIZE,CELLSIZE,CELLSIZE))
+            if mapgrid[y][x]!=0:
+                h = (mapgrid[y][x]/mmax)*359
+                s=0.80
+                v = 1
+                colo = hsv_to_rgb(h,s,v)
+                (e,r,t) = colo
+                colo = (255*e,255*r,255*t)
+                pg.draw.rect(screen,colo,pg.Rect(x*CELLSIZE,y*CELLSIZE,CELLSIZE,CELLSIZE))
 
 def drawgeometry(linearr):
     for line in linearr:
@@ -92,7 +99,7 @@ while not done:
         
         active = [thetask.remote(i,MAP_id,MAPGEO_ID,spacegrid_id,GLOBALANTENNALENGTH,CELLSIZE) for i in theARRY]
         screen.fill((0,0,0))
-        drawmap(MAP)
+        drawmap(MAP,MAX)
         drawgeometry(MAPGEO)
         for i in theARRY:
             for j in i:

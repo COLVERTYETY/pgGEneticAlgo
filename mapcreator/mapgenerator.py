@@ -26,21 +26,21 @@ def fullgeometry(cellsize):
             GEOMETRYGRID[y][x]=tile(GRID[y][x]) 
     for y in range(len(GEOMETRYGRID)):
         for x in range(len(GEOMETRYGRID[0])):
-            if GEOMETRYGRID[y][x].state==1: 
+            if GEOMETRYGRID[y][x].state!=0: 
                 if ingrid(x,y-1):#check north
-                    if GEOMETRYGRID[y-1][x].state!=1:#if no northern neighbour
+                    if GEOMETRYGRID[y-1][x].state==0:#if no northern neighbour
                         GEOMETRYGRID[y][x].northernborder=[[x*cellsize,y*cellsize],[(x+1)*cellsize,(y)*cellsize]]#no west border so we create the border
                         GEOMETRYARRAY.append(GEOMETRYGRID[y][x].northernborder)# add the new border to the border list
                 if ingrid(x,y+1):#check south
-                    if GEOMETRYGRID[y+1][x].state!=1:#if no southern neighbour
+                    if GEOMETRYGRID[y+1][x].state==0:#if no southern neighbour
                         GEOMETRYGRID[y][x].southernborder=[[x*cellsize,(y+1)*cellsize],[(x+1)*cellsize,(y+1)*cellsize]]#no west border so we create the border
                         GEOMETRYARRAY.append(GEOMETRYGRID[y][x].southernborder)# add the new border to the border list
                 if ingrid(x-1,y):#check west
-                    if GEOMETRYGRID[y][x-1].state!=1:#if no western neighbour
+                    if GEOMETRYGRID[y][x-1].state==0:#if no western neighbour
                         GEOMETRYGRID[y][x].westernborder=[[(x)*cellsize,(y)*cellsize],[(x)*cellsize,(y+1)*cellsize]]#no west border so we create the border
                         GEOMETRYARRAY.append(GEOMETRYGRID[y][x].westernborder)# add the new border to the border list
                 if ingrid(x+1,y):#check east
-                    if GEOMETRYGRID[y][x+1].state!=1:#if no western neighbour
+                    if GEOMETRYGRID[y][x+1].state==0:#if no western neighbour
                         GEOMETRYGRID[y][x].easternborder=[[(x+1)*cellsize,(y)*cellsize],[(x+1)*cellsize,(y+1)*cellsize]]#no west border so we create the border
                         GEOMETRYARRAY.append(GEOMETRYGRID[y][x].easternborder)# add the new border to the border list
 def generategeometry(cellsize):
