@@ -107,7 +107,7 @@ def mutate(first):
     for i in range(len(first)):
         for j in range(len(first[i])):
             dice = np.random.randint(0,101)
-            if dice<=(1.5*prob*100):
+            if dice<=(2*prob*100):
                 dice = np.random.randint(0,2)
                 mult = 1
                 if dice ==1:
