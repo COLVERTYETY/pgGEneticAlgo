@@ -54,7 +54,7 @@ def gui():
     screen.blit(mmax,(10,25))
     screen.blit(layer,(10,40))
     h = (CURRENTLAYER/MAX)*359
-    s=0.75
+    s=0.80
     v = 1
     colo = hsv_to_rgb(h,s,v)
     (e,r,t) = colo
@@ -67,13 +67,13 @@ def draw(ggrid,mmax):
         for x in range(len(ggrid[y])):
             if ggrid[y][x]!=0:
                 h = (ggrid[y][x]/mmax)*359
-                s=0.75
+                s=0.80
                 v = 1
                 colo = hsv_to_rgb(h,s,v)
                 (e,r,t) = colo
                 colo = (255*e,255*r,255*t)
                 pg.draw.rect(screen,colo,pg.Rect(x*CELLSIZE,y*CELLSIZE,CELLSIZE,CELLSIZE))
-                txt = smallfont.render(str(ggrid[y][x]),True,pg.Color('white'))
+                txt = smallfont.render(str(int(ggrid[y][x])),True,pg.Color('white'))
                 screen.blit(txt,(int(((x+0.5)*CELLSIZE)-(txt.get_width()/2)),int(((y+0.5)*CELLSIZE)-(txt.get_height()/2))))
 mouseisdown=False
 state=1

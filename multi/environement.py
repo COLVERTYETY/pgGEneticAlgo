@@ -17,13 +17,13 @@ done = False
 theARRY=[]
 being.SURFACE=screen
 
-MAPGEO = np.load("./mapGEO.npy")
-MAP = np.load("./map.npy")
+MAPGEO = np.load("./map-layeredGEO.npy")
+MAP = np.load("./map-layered.npy")
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
 startx = 100
 starty = 450
-MAX=1
+MAX=11
 
 def drawmap(mapgrid,mmax):
     global CELLSIZE
