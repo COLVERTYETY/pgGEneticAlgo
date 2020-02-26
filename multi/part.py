@@ -28,8 +28,10 @@ class being(object):
         return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+"):"+str(self.fitness))
 
     def apply(self):
-        inputs = np.hstack((self.antennainput,self.vel))
-        self.acc =np.dot(inputs,self.weights)
+        steering = np.array([np.arctan2(self.vel[1],self.vel[0]),np.linalg.norm(self.vel)])
+        inputs = np.hstack((self.antennainput,steering))
+        steering =np.dot(inputs,self.weights)
+        self.acc = np.array([steering[1]*np.cos(steering[0]),steering[1]*np.sin(steering[0])])
         self.vel=self.vel+self.acc
         norm = np.linalg.norm(self.vel)
         if norm>being.MAXSPEED:
@@ -39,6 +41,19 @@ class being(object):
             self.vel[0]/=norm/being.MINSPEED
             self.vel[1]/=norm/being.MINSPEED
         self.pos=self.pos+self.vel
+
+
+    def betterconstructantenna(self):
+        angle = np.arctan2(self.vel[1],self.vel[0])
+        theangles = np.arange(-1*being.antenannumber,being.antenannumber+1)
+        theangles = theangles*being.antennaangle
+        theangles = theangles+ angle
+        theangles = (being.antennalength*np.exp(1j*theangles))
+        creals = np.real(theangles)
+        cim = np.imag(theangles)
+        complexes = np.vstack((creals,cim)).T
+        return complexes
+
 
     def constructanennas(self):
         angle = np.arctan2(self.vel[1],self.vel[0])
@@ -73,6 +88,9 @@ class being(object):
             elif val==1 and self.gridfit==being.maxgridfit:
                 self.gridfit = val
                 self.fitness+=100
+            elif val < self.gridfit:
+                self.gridfit = val
+                self.fitness-=10
 
 
     def readantenna(self,line):
