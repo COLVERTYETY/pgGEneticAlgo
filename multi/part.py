@@ -13,6 +13,7 @@ class being(object):
     radius=5
     color=(0,255,0)
     antennacolor=(100,255,100)
+    maxgridfit=11
     def __init__(self,x,y):
         self.pos=np.array([x,y])
         self.vel=np.array([0,-1.5])
@@ -35,7 +36,8 @@ class being(object):
             self.vel[0]/=norm/being.MAXSPEED
             self.vel[1]/=norm/being.MAXSPEED
         if norm<being.MINSPEED:
-            self.alive=False
+            self.vel[0]/=norm/being.MINSPEED
+            self.vel[1]/=norm/being.MINSPEED
         self.pos=self.pos+self.vel
 
     def constructanennas(self):
@@ -68,6 +70,9 @@ class being(object):
             elif val==(self.gridfit+1):
                 self.gridfit = val
                 self.fitness+=10
+            elif val==1 and self.gridfit==being.maxgridfit:
+                self.gridfit = val
+                self.fitness+=100
 
 
     def readantenna(self,line):

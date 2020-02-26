@@ -62,7 +62,7 @@ def evolve(listlist):
     EVOLUTIONMAX.append(mmax)
     new_dudes = []
     print("                    starting fuses            ")
-    for i in range(50):
+    for i in range(len(total_list)//10):
         tmp = being(startx,starty)
         tmp.weights = mutate(total_list[i].weights)
         new_dudes.append(tmp)
@@ -83,7 +83,7 @@ def evolve(listlist):
             ttmp.weights = mutate(ttmp.weights)
         new_dudes.append(ttmp)
     if len(new_dudes)>len(total_list):
-        new_dudes = new_dudes[0:len(total_list)-1]
+        new_dudes = new_dudes[0:len(total_list)]
     listofdudes = []
     print("                   starting division         ")
     for i in range(num_cpus):
@@ -151,6 +151,7 @@ def thetask(objarray,mapgrid,mapgeometry,ggrid,antennalength,sizeofcell):
 amount=100
 num_cpus = psutil.cpu_count(logical=True)-1
 print("begin initializing the beings")
+being.maxgridfit=MAX
 for _i in range(num_cpus):
     tmp=[]
     print(_i)
@@ -205,6 +206,7 @@ while True:
     tmp = evolve(theARRY)
     theARRY = tmp
     print(len(theARRY[0]))
+    plt.clf()
     plt.plot(EVOLUTIONAVG)
     plt.plot(EVOLUTIONMAX)
     plt.draw()
