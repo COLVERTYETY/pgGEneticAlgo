@@ -7,6 +7,7 @@ import psutil
 import copy
 from colorsys import hsv_to_rgb
 import sys
+import statistics
 import matplotlib.pyplot as plt
 plt.ion() # make matplotlib interactif
 pg.init() # pylint: disable=no-member
@@ -27,8 +28,9 @@ CELLSIZE = 20
 GLOBALANTENNALENGTH=40
 MAXFRAMECOUNT=400
 startx = 100
-starty = 450
+starty = 250
 MAX=11
+amount=100
 
 def drawmap(mapgrid,mmax):
     global CELLSIZE
@@ -49,38 +51,31 @@ def evolve(listlist):
     for i in listlist:
         total_list.extend(i)
     total_list.sort(key=lambda i : i.fitness,reverse = True)
-    avg=0
-    mmax=0
-    for i in total_list:
-        k=i.fitness
-        avg+=k
-        if k > mmax:
-            mmax=k
-        print(i)
-    avg/=len(total_list)
+    avg=statistics.mean(map( lambda x: x.fitness,total_list))
+    mmax=max(map( lambda x: x.fitness, total_list))
     EVOLUTIONAVG.append(avg)
     EVOLUTIONMAX.append(mmax)
     new_dudes = []
     print("                    starting fuses            ")
-    for i in range(len(total_list)//10):
+    for i in range(len(total_list)//7):
         tmp = being(startx,starty)
-        tmp.weights = mutate(total_list[i].weights)
+        tmp.weights = mutate(mutate2(total_list[i].weights))
         new_dudes.append(tmp)
     tmp=[]
     for i in new_dudes:
-        for _ in range(len(total_list)//len(new_dudes)):
+        for _ in range((len(total_list)-len(new_dudes))//len(new_dudes)):
             dice = np.random.randint(0,len(new_dudes))
             ttmp = being(startx,starty)
-            ttmp.weights = mutate(fuser(i.weights,new_dudes[dice].weights))
+            ttmp.weights = mutate(mutate2(fuser(i.weights,new_dudes[dice].weights)))
             tmp.append(ttmp)
     new_dudes.extend(tmp)
     print("                    starting mutations       ")
     while len(new_dudes)<len(total_list):
         ttmp = being(startx,starty)
         dice = np.random.randint(0,len(new_dudes))
-        ttmp.weights = mutate(new_dudes[dice].weights)
+        ttmp.weights = mutate(mutate2(new_dudes[dice].weights))
         for i in range(100):
-            ttmp.weights = mutate(ttmp.weights)
+            ttmp.weights = mutate(mutate2(ttmp.weights))
         new_dudes.append(ttmp)
     if len(new_dudes)>len(total_list):
         new_dudes = new_dudes[0:len(total_list)]
@@ -93,7 +88,7 @@ def evolve(listlist):
     return listofdudes
 
 def fuser(first,second):
-    out = copy.copy(first)
+    out = np.copy(first)
     for i in range(len(first)):
         for j in range(len(first[i])):
             dice = np.random.randint(0,2)
@@ -112,7 +107,12 @@ def mutate(first):
                 mult = 1
                 if dice ==1:
                     mult= -1
-                out[i][j] = out[i][j] + mult*out[i][j]*(prob/10)
+                out[i][j] = out[i][j] + mult*out[i][j]*(prob/100)
+    return out
+
+def mutate2(first):
+    out = np.copy(first)
+    out +=(np.random.rand((being.antenannumber*2)+3,2) - np.random.rand((being.antenannumber*2)+3,2))/1000
     return out
 
 def drawgeometry(linearr):
@@ -148,7 +148,7 @@ def thetask(objarray,mapgrid,mapgeometry,ggrid,antennalength,sizeofcell):
             i.inmapgrid(mapgrid,sizeofcell)
     return newtmp
 
-amount=100
+
 num_cpus = psutil.cpu_count(logical=True)-1
 print("begin initializing the beings")
 being.maxgridfit=MAX
@@ -205,7 +205,8 @@ while True:
 
     tmp = evolve(theARRY)
     theARRY = tmp
-    print(len(theARRY[0]))
+    print("num of workers:",len(theARRY))
+    print("load per worker",len(theARRY[0]))
     plt.clf()
     plt.plot(EVOLUTIONAVG)
     plt.plot(EVOLUTIONMAX)
