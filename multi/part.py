@@ -48,10 +48,9 @@ class being(object):
         theangles = np.arange(-1*being.antenannumber,being.antenannumber+1)
         theangles = theangles*being.antennaangle
         theangles = theangles+ angle
-        theangles = (being.antennalength*np.exp(1j*theangles))
-        creals = np.real(theangles)
-        cim = np.imag(theangles)
-        complexes = np.vstack((creals,cim)).T
+        xs = being.antennalength*np.cos(theangles)#I dont know why this is necesssary but corrects divergeance from constructantenna
+        ys = being.antennalength*np.sin(theangles)
+        complexes = np.vstack((xs,ys)).T
         return complexes
 
 
@@ -96,7 +95,7 @@ class being(object):
     def readantenna(self,line):
         cc=-1
         if line[0][0]==line[1][0]:#line is vertical
-            for i in self.constructanennas():
+            for i in self.betterconstructantenna():
                 cc+=1
                 antenna = [[],[]]
                 antenna[0] = self.pos
