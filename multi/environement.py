@@ -97,17 +97,17 @@ def fuser(first,second):
     return out
 
 def mutate(first):
-    prob=0.05
+    prob=0.3
     out = copy.copy(first)
     for i in range(len(first)):
         for j in range(len(first[i])):
             dice = np.random.randint(0,101)
-            if dice<=(2*prob*100):
+            if dice<=(prob*100):
                 dice = np.random.randint(0,2)
                 mult = 1
                 if dice ==1:
                     mult= -1
-                out[i][j] = out[i][j] + mult*out[i][j]*(prob/100)
+                out[i][j] = out[i][j] + mult*out[i][j]*(prob/10)
     return out
 
 def mutate2(first):
