@@ -134,6 +134,10 @@ def savemaparray(name):
     global GRID
     np.save(name,GRID.astype(int))
 
+def megasave(dataarray,name):
+    np.save(name,dataarray)
+    
+
 def savegeometry(name):
     global GEOMETRYARRAY
     tmp = name.find(".npy")
@@ -144,6 +148,21 @@ def savegeometry(name):
 def loadgeometry(name):
     global GEOMETRYARRAY
     GEOMETRYARRAY = np.load(name)
+
+def megaload(name):
+    global GRID , GEOMETRYARRAY
+    dataarray = np.load(name)
+    GRID = dataarray[6]
+    GEOMETRYARRAY = dataarray[7]
+    # 0 is cellsize
+    # 1 is max
+    # 2 is startx
+    # 3 is starty
+    # 4 is startvectx
+    # 5 is startvecty
+    # 6 is GRID
+    # 7 is GRID GEO
+    return (dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
 
 def loadmaparray(name):
     global GRID

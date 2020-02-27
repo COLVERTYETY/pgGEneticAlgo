@@ -21,11 +21,8 @@ res = str(input())
 if len(res)>1:
     NAME=res
     if os.path.exists('./'+res):
-        mg.loadmaparray(res)
-        
-        print("a map has been found and loaded")
-        print("please enter the max layer")
-        MAX = int(input())
+        (CELLSIZE,MAX,startx,starty,secondx,secondy) = mg.megaload('./'+res)
+        print("a map has been found and MEGAloaded")
     else:
         mg.initialize(w,h)
         print("no map has been found and an empty map has been created")
@@ -149,8 +146,9 @@ while not done:
         clock.tick()
         pg.display.flip()
 
-mg.savemaparray(NAME)
-mg.savegeometry(NAME)
+
+megamap = np.array([CELLSIZE,MAX,startx,starty,secondx,secondy,mg.GRID,mg.GEOMETRYARRAY])
+mg.megasave(megamap,NAME)
 print("saved to "+ NAME)
 print("MAX IS :::  ",MAX)
 print("(startx,starty): ",startx,starty)
