@@ -9,6 +9,7 @@ from colorsys import hsv_to_rgb
 import sys
 import statistics
 import matplotlib.pyplot as plt
+from math import sqrt
 plt.ion() # make matplotlib interactif
 pg.init() # pylint: disable=no-member
 WIDTH=800
@@ -22,15 +23,15 @@ theARRY=[]
 being.SURFACE=screen
 EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
-MAPGEO = np.load("./map-layeredGEO.npy")
-MAP = np.load("./map-layered.npy")
+MAPGEO = np.load("./scurve2GEO.npy")
+MAP = np.load("./scurve2.npy")
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
 MAXFRAMECOUNT=400
-startx = 100
-starty = 250
-MAX=11
-amount=100
+startx = 95
+starty = 440
+MAX=35
+amount=120
 
 def drawmap(mapgrid,mmax):
     global CELLSIZE
@@ -57,16 +58,17 @@ def evolve(listlist):
     EVOLUTIONMAX.append(mmax)
     new_dudes = []
     print("                    starting fuses            ")
-    for i in range(len(total_list)//7):
+    N = int(sqrt(2*len(total_list)+1/4)+1/2)
+    for i in range(N):
         tmp = being(startx,starty)
-        tmp.weights = mutate(mutate2(total_list[i].weights))
+        tmp.weights = total_list[i].weights
         new_dudes.append(tmp)
     tmp=[]
-    for i in new_dudes:
-        for _ in range((len(total_list)-len(new_dudes))//len(new_dudes)):
+    for i,nd in enumerate(new_dudes):
+        for j in range(N-i,0,-1):
             dice = np.random.randint(0,len(new_dudes))
             ttmp = being(startx,starty)
-            ttmp.weights = mutate(mutate2(fuser(i.weights,new_dudes[dice].weights)))
+            ttmp.weights = mutate(mutate2(fuser(nd.weights,new_dudes[dice].weights)))
             tmp.append(ttmp)
     new_dudes.extend(tmp)
     print("                    starting mutations       ")
@@ -97,17 +99,17 @@ def fuser(first,second):
     return out
 
 def mutate(first):
-    prob=0.3
+    prob=0.5
     out = copy.copy(first)
     for i in range(len(first)):
         for j in range(len(first[i])):
-            dice = np.random.randint(0,101)
-            if dice<=(prob*100):
+            dice = np.random.rand()
+            if dice<prob:
                 dice = np.random.randint(0,2)
                 mult = 1
                 if dice ==1:
                     mult= -1
-                out[i][j] = out[i][j] + mult*out[i][j]*(prob/10)
+                out[i][j] = out[i][j] + mult*out[i][j]*(prob/100)
     return out
 
 def mutate2(first):

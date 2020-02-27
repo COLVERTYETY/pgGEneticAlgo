@@ -4,9 +4,8 @@ import numpy as np
 class being(object):
     GRID = np.zeros([10, 10])
     #SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
-    MAXSPEED=10
-    MINSPEED=1
-    CELLSIZE=10
+    MAXSPEED=3
+    MINSPEED=0
     antenannumber=2
     antennaangle=np.pi/6
     antennalength=40
@@ -48,7 +47,7 @@ class being(object):
         theangles = np.arange(-1*being.antenannumber,being.antenannumber+1)
         theangles = theangles*being.antennaangle
         theangles = theangles+ angle
-        xs = being.antennalength*np.cos(theangles)#I dont know why this is necesssary but corrects divergeance from constructantenna
+        xs = being.antennalength*np.cos(theangles)
         ys = being.antennalength*np.sin(theangles)
         complexes = np.vstack((xs,ys)).T
         return complexes
