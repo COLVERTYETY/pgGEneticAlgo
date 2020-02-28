@@ -4,7 +4,7 @@ import numpy as np
 class being(object):
     GRID = np.zeros([10, 10])
     #SURFACE = pg.Surface((100,100)) # pylint: disable=too-many-function-args
-    MAXSPEED=3
+    MAXSPEED=5
     MINSPEED=0
     antenannumber=2
     antennaangle=np.pi/6
@@ -13,25 +13,27 @@ class being(object):
     color=(0,255,0)
     antennacolor=(100,255,100)
     maxgridfit=11
+    initialvel=[]
     def __init__(self,x,y):
         self.pos=np.array([x,y])
-        self.vel=np.array([0,-1.5])
-        self.acc=np.array([0,0])
+        self.vel=being.initialvel
         self.antennainput=np.zeros(((being.antenannumber*2)+1))
-        self.weights = np.zeros(((being.antenannumber*2)+3,2))
+        self.weights = np.zeros(((being.antenannumber*2)+2,2))
         self.fitness=0
         self.gridfit=1
         self.alive = True
 
     def __repr__(self):
-        return ("("+str(self.pos)+" "+str(self.vel)+" "+str(self.acc)+"):"+str(self.fitness))
+        return ("("+str(self.pos)+" "+str(self.vel)+" "+"):"+str(self.fitness))
 
     def apply(self):
-        steering = np.array([np.arctan2(self.vel[1],self.vel[0]),np.linalg.norm(self.vel)])
+        # steering = np.array([np.arctan2(self.vel[1],self.vel[0]),np.linalg.norm(self.vel)])
+        # inputs = np.hstack((self.antennainput,steering))
+        steering = np.array([np.linalg.norm(self.vel)])
         inputs = np.hstack((self.antennainput,steering))
+        angle = np.arctan2(self.vel[1],self.vel[0])
         steering =np.dot(inputs,self.weights)
-        self.acc = np.array([steering[1]*np.cos(steering[0]),steering[1]*np.sin(steering[0])])
-        self.vel=self.vel+self.acc
+        self.vel=self.vel+np.array([steering[1]*np.cos(steering[0]+angle),steering[1]*np.sin(steering[0]+angle)])
         norm = np.linalg.norm(self.vel)
         if norm>being.MAXSPEED:
             self.vel[0]/=norm/being.MAXSPEED

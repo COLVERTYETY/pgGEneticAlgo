@@ -20,17 +20,28 @@ clock = pg.time.Clock()
 done = False
 
 theARRY=[]
-being.SURFACE=screen
 EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
-MAPGEO = np.load("./scurve2GEO.npy")
-MAP = np.load("./scurve2.npy")
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
 MAXFRAMECOUNT=400
 startx = 95
 starty = 440
 MAX=35
+dataarray = np.load("./megatest.npy")
+MAP = dataarray[6]
+MAPGEO = dataarray[7]
+# 0 is cellsize
+# 1 is max
+# 2 is startx
+# 3 is starty
+# 4 is startvectx
+# 5 is startvecty
+# 6 is GRID
+# 7 is GRID GEO
+(CELLSIZE,MAX,startx,starty,secondx,secondy)=(dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
+dataarray=[]
+being.initialvel=np.array([secondx/20,secondy/20])
 amount=120
 
 def drawmap(mapgrid,mmax):
@@ -65,7 +76,7 @@ def evolve(listlist):
         new_dudes.append(tmp)
     tmp=[]
     for i,nd in enumerate(new_dudes):
-        for j in range(N-i,0,-1):
+        for _ in range(N-i,0,-1):
             dice = np.random.randint(0,len(new_dudes))
             ttmp = being(startx,starty)
             ttmp.weights = mutate(mutate2(fuser(nd.weights,new_dudes[dice].weights)))
@@ -114,7 +125,7 @@ def mutate(first):
 
 def mutate2(first):
     out = np.copy(first)
-    out +=(np.random.rand((being.antenannumber*2)+3,2) - np.random.rand((being.antenannumber*2)+3,2))/1000
+    out +=(np.random.rand((being.antenannumber*2)+2,2) - np.random.rand((being.antenannumber*2)+2,2))/1000
     return out
 
 def drawgeometry(linearr):
@@ -159,7 +170,7 @@ for _i in range(num_cpus):
     print(_i)
     for _j in range(amount):
         ttmp=being(startx,starty)
-        ttmp.weights = np.random.rand((being.antenannumber*2)+3,2) - np.random.rand((being.antenannumber*2)+3,2)
+        ttmp.weights = np.random.rand((being.antenannumber*2)+2,2) - np.random.rand((being.antenannumber*2)+2,2)
         tmp.append(ttmp)
     theARRY.append(tmp)
 

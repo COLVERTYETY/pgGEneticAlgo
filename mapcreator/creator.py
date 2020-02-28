@@ -133,6 +133,7 @@ while not done:
                             CURRENTLAYER=MAX
                     if event.key == pg.K_RETURN:# pylint: disable=no-member
                         MAX+=1
+                        alldraw()
                     if event.key == pg.K_SPACE: # pylint: disable=no-member
                         (startx,starty) = pg.mouse.get_pos()
                         spaceisdown=True
