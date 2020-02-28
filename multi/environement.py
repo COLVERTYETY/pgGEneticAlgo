@@ -15,6 +15,7 @@ pg.init() # pylint: disable=no-member
 WIDTH=800
 HEIGHT=700
 screen = pg.display.set_mode((WIDTH,HEIGHT))
+tempsurf = pg.Surface((WIDTH,HEIGHT))
 font = pg.font.Font(None, 30)
 clock = pg.time.Clock()
 done = False
@@ -24,7 +25,7 @@ EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
-MAXFRAMECOUNT=400
+MAXFRAMECOUNT=500
 startx = 95
 starty = 440
 MAX=35
@@ -42,8 +43,8 @@ MAPGEO = dataarray[7]
 (CELLSIZE,MAX,startx,starty,secondx,secondy)=(dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
 dataarray=[]
 being.initialvel=np.array([secondx/20,secondy/20])
-amount=120
-
+amount=100
+being.maxgridfit = MAX
 def drawmap(mapgrid,mmax):
     global CELLSIZE
     for y in range(len(mapgrid)):
@@ -55,7 +56,7 @@ def drawmap(mapgrid,mmax):
                 colo = hsv_to_rgb(h,s,v)
                 (e,r,t) = colo
                 colo = (255*e,255*r,255*t)
-                pg.draw.rect(screen,colo,pg.Rect(x*CELLSIZE,y*CELLSIZE,CELLSIZE,CELLSIZE))
+                pg.draw.rect(tempsurf,colo,pg.Rect(x*CELLSIZE,y*CELLSIZE,CELLSIZE,CELLSIZE))
 
 def evolve(listlist):
     global startx,starty,num_cpus , EVOLUTIONAVG , EVOLUTIONMAX
@@ -128,13 +129,23 @@ def mutate2(first):
     out +=(np.random.rand((being.antenannumber*2)+2,2) - np.random.rand((being.antenannumber*2)+2,2))/1000
     return out
 
+def alldraw():
+    global MAPGEO , MAP , MAX
+    drawgeometry(MAPGEO)
+    drawmap(MAP , MAX)
+
 def drawgeometry(linearr):
     for line in linearr:
         x1 = int(line[0][0])
         y1 = int(line[0][1])
         x2 = int(line[1][0])
         y2 = int(line[1][1])
-        pg.draw.line(screen,(255,0,0),(x1,y1),(x2,y2),1)
+        pg.draw.line(tempsurf,(255,0,0),(x1,y1),(x2,y2),1)
+
+def drawantenna(ob):
+        for i in ob.betterconstructantenna():
+            pg.draw.line(screen,(255,255,255),(int(ob.pos[0]),int(ob.pos[1])),(int(ob.pos[0]+i[0]),int(ob.pos[1]+i[1])),1)
+
 
 def draw(part):
     colora = (255,255,255)
@@ -190,6 +201,8 @@ MAPGEO_ID = ray.put(MAPGEO)
 spacegrid_id = ray.put(spatialhash.GRID)
 print("done")
 
+alldraw()
+
 frame_counter=0
 while True:
     while not done:
@@ -199,12 +212,11 @@ while True:
                             sys.exit()
             
             active = [thetask.remote(i,MAP_id,MAPGEO_ID,spacegrid_id,GLOBALANTENNALENGTH,CELLSIZE) for i in theARRY]
-            screen.fill((0,0,0))
-            drawmap(MAP,MAX)
-            drawgeometry(MAPGEO)
+            screen.blit(tempsurf,(0,0))
             for i in theARRY:
                 for j in i:
                     draw(j)
+                    drawantenna(j)
             fps = font.render(str(int(clock.get_fps())), True, pg.Color('white'))
             screen.blit(fps, (50, 50))
             theARRY= ray.get(active)
