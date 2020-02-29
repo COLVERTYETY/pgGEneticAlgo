@@ -10,41 +10,36 @@ import sys
 import statistics
 import matplotlib.pyplot as plt
 from math import sqrt
+import selectingmenu
 plt.ion() # make matplotlib interactif
-pg.init() # pylint: disable=no-member
-WIDTH=800
-HEIGHT=700
-screen = pg.display.set_mode((WIDTH,HEIGHT))
-tempsurf = pg.Surface((WIDTH,HEIGHT))
-font = pg.font.Font(None, 30)
-clock = pg.time.Clock()
-done = False
 
 theARRY=[]
 EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
-MAXFRAMECOUNT=500
+MAXFRAMECOUNT=200
 startx = 95
 starty = 440
 MAX=35
-dataarray = np.load("./megatest.npy")
+dataarray = np.load(selectingmenu.getfile())
 MAP = dataarray[6]
 MAPGEO = dataarray[7]
-# 0 is cellsize
-# 1 is max
-# 2 is startx
-# 3 is starty
-# 4 is startvectx
-# 5 is startvecty
-# 6 is GRID
-# 7 is GRID GEO
 (CELLSIZE,MAX,startx,starty,secondx,secondy)=(dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
 dataarray=[]
 being.initialvel=np.array([secondx/20,secondy/20])
-amount=100
+amount=60
 being.maxgridfit = MAX
+
+pg.init() # pylint: disable=no-member
+WIDTH=800
+HEIGHT=700
+screen = pg.display.set_mode((WIDTH,HEIGHT))
+tempsurf = pg.Surface((WIDTH,HEIGHT)) # pylint: disable=too-many-function-args
+font = pg.font.Font(None, 30)
+clock = pg.time.Clock()
+done = False
+
 def drawmap(mapgrid,mmax):
     global CELLSIZE
     for y in range(len(mapgrid)):
@@ -233,9 +228,10 @@ while True:
     print("num of workers:",len(theARRY))
     print("load per worker",len(theARRY[0]))
     plt.clf()
-    plt.plot(EVOLUTIONAVG)
-    plt.plot(EVOLUTIONMAX)
+    plt.plot(EVOLUTIONAVG,label='average')
+    plt.plot(EVOLUTIONMAX,label='max')
+    plt.legend()
     plt.draw()
-    plt.pause(0.1)
+    plt.pause(0.01)
     done=False
     frame_counter=0

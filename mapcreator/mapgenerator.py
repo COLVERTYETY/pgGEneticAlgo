@@ -10,11 +10,14 @@ def initialize(width,height):
 
 def toggle(mpos,cellsize,state):
     global GRID
+    res = False
     x=mpos[0]//cellsize
     y=mpos[1]//cellsize
     if ingrid(x,y):
-        GRID[y][x]=state
-
+        if  GRID[y][x]!=state:
+            GRID[y][x]=state
+            res = True
+    return res
 def fullgeometry(cellsize):
     global GRID, GEOMETRYGRID , GEOMETRYARRAY
     #shape of line x1,y1 x2,y2
@@ -135,7 +138,7 @@ def savemaparray(name):
     np.save(name,GRID.astype(int))
 
 def megasave(dataarray,name):
-    np.save(name,dataarray)
+    np.save("../maps/"+name,dataarray)
     
 
 def savegeometry(name):
@@ -162,7 +165,7 @@ def megaload(name):
     # 5 is startvecty
     # 6 is GRID
     # 7 is GRID GEO
-    return (dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
+    return (name,dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
 
 def loadmaparray(name):
     global GRID

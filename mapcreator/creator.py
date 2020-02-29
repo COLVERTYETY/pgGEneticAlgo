@@ -3,7 +3,7 @@ import numpy as np
 import mapgenerator as mg
 import os.path
 from colorsys import hsv_to_rgb
-
+import selectingmenu
 WIDTH=800
 HEIGHT=700
 CELLSIZE=20
@@ -16,19 +16,11 @@ NAME="map.npy"
 MAX=1
 CURRENTLAYER=1
 print("welcome to map generator !!")
-print("enter a name to load a file, if no file is found a file will be created !!")
-res = str(input())
-if len(res)>1:
-    NAME=res
-    if os.path.exists('./'+res):
-        (CELLSIZE,MAX,startx,starty,secondx,secondy) = mg.megaload('./'+res)
-        print("a map has been found and MEGAloaded")
-    else:
-        mg.initialize(w,h)
-        print("no map has been found and an empty map has been created")
-else:
-    print("empty name, clearing and editing "+NAME)
+mmap = selectingmenu.getfile()
+if mmap == "../maps/new_map":
     mg.initialize(w,h)
+else:
+    (NAME,CELLSIZE,MAX,startx,starty,secondx,secondy) = mg.megaload(mmap)
 # mg.loadgeometry("mapGEO.npy")
 pg.init() # pylint: disable=no-member
 screen = pg.display.set_mode((WIDTH,HEIGHT))
@@ -98,6 +90,7 @@ def alldraw():
     drawgeomtry()
 mouseisdown=False
 state=1
+alldraw()
 while not done:
         for event in pg.event.get():
                 if event.type == pg.QUIT:# pylint: disable=no-member
@@ -110,18 +103,18 @@ while not done:
                             state=0
                         (w,h) = pg.mouse.get_pos()
                         mpos=np.array([w,h])                 
-                        mg.toggle(mpos,CELLSIZE,state)
-                        mg.fullgeometry(CELLSIZE)
-                        alldraw()
+                        if mg.toggle(mpos,CELLSIZE,state):
+                            mg.fullgeometry(CELLSIZE)
+                            alldraw()
                 if event.type == pg.MOUSEBUTTONUP: # pylint: disable=no-member
                         mouseisdown=False
                 if event.type == pg.MOUSEMOTION: # pylint: disable=no-member   
                     if mouseisdown:
                         (w,h) = pg.mouse.get_pos()
                         mpos=np.array([w,h])                 
-                        mg.toggle(mpos,CELLSIZE,state)
-                        mg.fullgeometry(CELLSIZE)
-                    alldraw()
+                        if mg.toggle(mpos,CELLSIZE,state):
+                            mg.fullgeometry(CELLSIZE)
+                            alldraw()
                 if event.type == pg.KEYDOWN:# pylint: disable=no-member
                     if event.key == pg.K_UP:# pylint: disable=no-member
                         CURRENTLAYER+=1
@@ -147,7 +140,12 @@ while not done:
         clock.tick()
         pg.display.flip()
 
-
+mmax = 0
+for i in  mg.GRID:
+    for j in i:
+        if j >mmax:
+            mmax = j
+MAX = mmax
 megamap = np.array([CELLSIZE,MAX,startx,starty,secondx,secondy,mg.GRID,mg.GEOMETRYARRAY])
 mg.megasave(megamap,NAME)
 print("saved to "+ NAME)
