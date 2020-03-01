@@ -8,19 +8,18 @@ import copy
 from colorsys import hsv_to_rgb
 import sys
 import statistics
-import matplotlib.pyplot as plt
 from math import sqrt
 import selectingmenu
 import drawings as dr
+import plotter as plt
 
-plt.ion() # make matplotlib interactif
 
 theARRY=[]
 EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
-MAXFRAMECOUNT=200
+MAXFRAMECOUNT=100
 startx = 95
 starty = 440
 MAX=35
@@ -41,18 +40,23 @@ dr.init(screen)
 font = pg.font.Font(None, 30)
 clock = pg.time.Clock()
 done = False
+BEST_W8 = np.zeros(((being.antenannumber*2)+2,2))
+plotter = plt.plotter()
 
 
 def evolve(listlist):
-    global startx,starty,num_cpus , EVOLUTIONAVG , EVOLUTIONMAX
+    global startx,starty,num_cpus , EVOLUTIONAVG , EVOLUTIONMAX,plotter,BEST_W8
     total_list=[]
     for i in listlist:
         total_list.extend(i)
     total_list.sort(key=lambda i : i.fitness,reverse = True)
+    best_brain = total_list[0].weights
+    np.savetxt("./brains/bestweights.txt",total_list[0].weights)
     avg=statistics.mean(map( lambda x: x.fitness,total_list))
     mmax=max(map( lambda x: x.fitness, total_list))
     EVOLUTIONAVG.append(avg)
     EVOLUTIONMAX.append(mmax)
+    BEST_W8 =  plotter.update(EVOLUTIONMAX,EVOLUTIONAVG,best_brain,BEST_W8)
     new_dudes = []
     print("                    starting fuses            ")
     N = int(sqrt(2*len(total_list)+1/4)+1/2)
@@ -161,6 +165,7 @@ MAPGEO_ID = ray.put(MAPGEO)
 spacegrid_id = ray.put(spatialhash.GRID)
 print("done")
 
+
 dr.alldraw(MAP,MAX,MAPGEO,CELLSIZE)
 frame_counter=0
 while True:
@@ -191,11 +196,5 @@ while True:
     theARRY = tmp
     print("num of workers:",len(theARRY))
     print("load per worker",len(theARRY[0]))
-    plt.clf()
-    plt.plot(EVOLUTIONAVG,label='average')
-    plt.plot(EVOLUTIONMAX,label='max')
-    plt.legend()
-    plt.draw()
-    plt.pause(0.01)
     done=False
     frame_counter=0
