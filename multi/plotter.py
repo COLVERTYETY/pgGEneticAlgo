@@ -6,10 +6,10 @@ plt.ion() # make matplotlib interactif
 class plotter():
     def __init__(self):
         self.fig = plt.figure()
-        self.gs = self.fig.add_gridspec(2,2)
+        self.gs = self.fig.add_gridspec(3,1)
         self.ax1 = self.fig.add_subplot(self.gs[0, 0])
-        self.ax2 = self.fig.add_subplot(self.gs[0, 1])
-        self.ax3 = self.fig.add_subplot(self.gs[1, :])
+        self.ax2 = self.fig.add_subplot(self.gs[1,0])
+        self.ax3 = self.fig.add_subplot(self.gs[2, 0])
 
     def update(self,EVOLUTIONMAX,EVOLUTIONAVG,best_weights,BEST_W8):
         self.ax3.clear()

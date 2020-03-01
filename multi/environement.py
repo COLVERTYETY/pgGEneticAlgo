@@ -19,7 +19,7 @@ EVOLUTIONAVG=[]
 EVOLUTIONMAX=[]
 CELLSIZE = 20
 GLOBALANTENNALENGTH=40
-MAXFRAMECOUNT=100
+MAXFRAMECOUNT=400
 startx = 95
 starty = 440
 MAX=35
@@ -51,7 +51,7 @@ def evolve(listlist):
         total_list.extend(i)
     total_list.sort(key=lambda i : i.fitness,reverse = True)
     best_brain = total_list[0].weights
-    np.savetxt("./brains/bestweights.txt",total_list[0].weights)
+    np.savetxt("./brains/bestof_"+str(selectingmenu.meanulist[selectingmenu.selected])[0:len(str(selectingmenu.meanulist[selectingmenu.selected]))-4]+".txt",total_list[0].weights)
     avg=statistics.mean(map( lambda x: x.fitness,total_list))
     mmax=max(map( lambda x: x.fitness, total_list))
     EVOLUTIONAVG.append(avg)

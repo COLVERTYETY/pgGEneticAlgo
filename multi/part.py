@@ -55,22 +55,22 @@ class being(object):
         return complexes
 
 
-    def constructanennas(self):
-        angle = np.arctan2(self.vel[1],self.vel[0])
-        x=being.antennalength*np.cos(angle)
-        y = being.antennalength*np.sin(angle)
-        yield np.array([x,y])
-        for _ in range(being.antenannumber):
-            angle+= being.antennaangle
-            x=being.antennalength*np.cos(angle)
-            y = being.antennalength*np.sin(angle)
-            yield np.array([x,y])
-        angle = np.arctan2(self.vel[1],self.vel[0])
-        for _ in range(being.antenannumber):
-            angle-= being.antennaangle
-            x=being.antennalength*np.cos(angle)
-            y = being.antennalength*np.sin(angle)
-            yield np.array([x,y])
+    # def constructanennas(self):
+    #     angle = np.arctan2(self.vel[1],self.vel[0])
+    #     x=being.antennalength*np.cos(angle)
+    #     y = being.antennalength*np.sin(angle)
+    #     yield np.array([x,y])
+    #     for _ in range(being.antenannumber):
+    #         angle+= being.antennaangle
+    #         x=being.antennalength*np.cos(angle)
+    #         y = being.antennalength*np.sin(angle)
+    #         yield np.array([x,y])
+    #     angle = np.arctan2(self.vel[1],self.vel[0])
+    #     for _ in range(being.antenannumber):
+    #         angle-= being.antennaangle
+    #         x=being.antennalength*np.cos(angle)
+    #         y = being.antennalength*np.sin(angle)
+    #         yield np.array([x,y])
         
     # def drawantenna(self):
     #     for i in self.constructanennas():
@@ -85,12 +85,13 @@ class being(object):
             elif val==(self.gridfit+1):
                 self.gridfit = val
                 self.fitness+=10
-            elif val==1 and self.gridfit==being.maxgridfit:
-                self.gridfit = val
-                self.fitness+=100
             elif val < self.gridfit:
                 self.gridfit = val
                 self.fitness-=10
+            elif val==1 and self.gridfit==being.maxgridfit:
+                self.gridfit = val
+                self.fitness+=100
+            
 
 
     def readantenna(self,line):
@@ -113,7 +114,7 @@ class being(object):
                         if self.antennainput[cc] >=res:
                             self.antennainput[cc]=res
         elif line[0][1]==line[1][1]:#if line is horisontal
-            for i in self.constructanennas():
+            for i in self.betterconstructantenna():
                 cc+=1
                 antenna = [[],[]]
                 antenna[0] = self.pos
