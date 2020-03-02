@@ -28,8 +28,8 @@ def draw(ggrid,mmax,CELLSIZE):
                 TEMPSURF.blit(txt,(int(((x+0.5)*CELLSIZE)-(txt.get_width()/2)),int(((y+0.5)*CELLSIZE)-(txt.get_height()/2))))
 
 def startpos(spaceisdown,startx,starty,secondx,secondy):
-    global  TEMPSURF
-    pg.draw.circle(TEMPSURF,(255,255,255),(startx,starty),5)
+    global   SCREEN
+    pg.draw.circle(SCREEN,(255,255,255),(startx,starty),5)
     if spaceisdown:
         (secondx,secondy)  = pg.mouse.get_pos()
         secondx-=startx
@@ -37,7 +37,7 @@ def startpos(spaceisdown,startx,starty,secondx,secondy):
         angle = np.arctan2(secondy,secondx)
         secondx = 20*np.cos(angle)
         secondy = 20*np.sin(angle)
-    pg.draw.line(TEMPSURF,(255,255,255),(startx,starty),(int(startx+secondx),int(starty+secondy)),2)
+    pg.draw.line(SCREEN,(255,255,255),(startx,starty),(int(startx+secondx),int(starty+secondy)),2)
  
 def drawgeomtry(geoarray):
     global TEMPSURF
