@@ -29,7 +29,7 @@ MAPGEO = dataarray[7]
 (CELLSIZE,MAX,startx,starty,secondx,secondy)=(dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])
 dataarray=[]
 being.initialvel=np.array([secondx/20,secondy/20])
-amount=60
+amount=100
 being.maxgridfit = MAX
 
 pg.init() # pylint: disable=no-member
@@ -195,6 +195,7 @@ while True:
     tmp = evolve(theARRY)
     theARRY = tmp
     print("num of workers:",len(theARRY))
-    print("load per worker",len(theARRY[0]))
+    print("load per worker:",len(theARRY[0]))
+    print("grand total:",len(theARRY)*len(theARRY[0]))
     done=False
     frame_counter=0
