@@ -23,7 +23,7 @@ MAXFRAMECOUNT=400
 startx = 95
 starty = 440
 MAX=35
-dataarray = np.load(selectingmenu.getfile())
+dataarray = np.load(selectingmenu.getfile(),allow_pickle = True)
 MAP = dataarray[6]
 MAPGEO = dataarray[7]
 (CELLSIZE,MAX,startx,starty,secondx,secondy)=(dataarray[0],dataarray[1],dataarray[2],dataarray[3],dataarray[4],dataarray[5])

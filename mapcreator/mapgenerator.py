@@ -154,7 +154,7 @@ def loadgeometry(name):
 
 def megaload(name):
     global GRID , GEOMETRYARRAY
-    dataarray = np.load(name)
+    dataarray = np.load(name,allow_pickle = True)
     GRID = dataarray[6]
     GEOMETRYARRAY = dataarray[7]
     # 0 is cellsize
